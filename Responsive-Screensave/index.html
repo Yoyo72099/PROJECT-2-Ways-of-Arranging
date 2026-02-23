@@ -1,1 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pingu Screensaver</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ice:     #cff4ff;
+    --sky:     #a8dff7;
+    --deep:    #1a6fa8;
+    --navy:    #0d3d6b;
+    --snow:    #eaf9ff;
+    --black:   #1a1a2e;
+    --orange:  #ff8c00;
+    --white:   #ffffff;
+    --pingu-size: 180px;
+  }
 
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 100vw; height: 100vh;
+    overflow: hidden;
+    font-family: 'Quicksand', sans-serif;
+    position: relative;
+    background: var(--navy);
+    cursor: default;
+  }
+
+  /* ══════════════════════════
+     BACKGROUND — Arctic sky
+  ══════════════════════════ */
+  .bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      #0d1b3e 0%,
+      #0d3d6b 30%,
+      #1a6fa8 60%,
+      #a8dff7 80%,
+      #cff4ff 100%
+    );
+    animation: skyPulse 10s ease-in-out infinite alternate;
+  }
+  @keyframes skyPulse {
+    0%   { filter: brightness(1) hue-rotate(0deg); }
+    100% { filter: brightness(1.1) hue-rotate(8deg); }
+  }
+
+  /* ══════════════════════════
+     AURORA borealis bands
+  ══════════════════════════ */
+  .aurora {
+    position: absolute;
+    top: 0; left: -20%;
+    width: 140%;
+    height: 45%;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(0,255,180,0.12) 30%,
+      rgba(100,220,255,0.15) 55%,
+      rgba(180,100,255,0.08) 75%,
+      transparent 100%
+    );
+    border-radius: 0 0 60% 60%;
+    animation: auroraWave 7s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+  .aurora2 {
+    position: absolute;
+    top: 5%; left: -10%;
+    width: 120%;
+    height: 35%;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      rgba(80,255,200,0.08) 40%,
+      rgba(50,180,255,0.1) 70%,
+      transparent
+    );
+    border-radius: 0 0 50% 50%;
+    animation: auroraWave 9s ease-in-out infinite alternate-reverse;
+    pointer-events: none;
+  }
+  @keyframes auroraWave {
+    0%   { transform: scaleX(1)   skewY(-1deg) translateY(0px); opacity: 0.7; }
+    50%  { transform: scaleX(1.05) skewY(1deg) translateY(10px); opacity: 1; }
+    100% { transform: scaleX(0.97) skewY(-2deg) translateY(-8px); opacity: 0.6; }
+  }
+
+  /* ══════════════════════════
+     STARS
+  ══════════════════════════ */
+  .stars {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle var(--td, 2s) ease-in-out infinite;
+    animation-delay: var(--tdd, 0s);
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50%       { opacity: 1;   transform: scale(1.5); }
+  }
+
+  /* ══════════════════════════
+     ELEMENT 1 — Snowflakes
+  ══════════════════════════ */
+  .snowflakes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+  }
+  .flake {
+    position: absolute;
+    color: white;
+    font-size: var(--fs, 16px);
+    top: -30px;
+    left: var(--fx, 50%);
+    opacity: 0;
+    animation: snowFall var(--fd, 8s) linear infinite;
+    animation-delay: var(--fdd, 0s);
+    user-select: none;
+  }
+  @keyframes snowFall {
+    0%   { transform: translateY(-20px) rotate(0deg);     opacity: 0; }
+    5%   { opacity: 0.9; }
+    90%  { opacity: 0.7; }
+    100% { transform: translateY(105vh) rotate(360deg);  opacity: 0; }
+  }
+
+  /* ══════════════════════════
+     ICE GROUND
+  ══════════════════════════ */
+  .ground {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 22%;
+    background: linear-gradient(180deg, #cff4ff 0%, #eaf9ff 60%, #ffffff 100%);
+    border-radius: 60% 60% 0 0 / 30% 30% 0 0;
+    box-shadow: 0 -4px 30px rgba(168,223,247,0.6);
+    z-index: 5;
+  }
+  .ground::before {
+    content: '';
+    position: absolute;
+    top: -12px; left: 5%; right: 5%;
+    height: 24px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 50%;
+    filter: blur(8px);
+  }
+
+  /* ══════════════════════════
+     ELEMENT 2 — Pingu (SVG, bouncing)
+  ══════════════════════════ */
+  .pingu-wrap {
+    position: absolute;
+    bottom: 18%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    animation: pinguBounce 1.8s ease-in-out infinite,
+               pinguSway 4s ease-in-out infinite;
+    cursor: pointer;
+    transition: filter 0.2s;
+  }
+  .pingu-wrap:hover { filter: brightness(1.15) drop-shadow(0 0 20px rgba(168,223,247,0.8)); }
+
+  @keyframes pinguBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0px) scaleY(1); }
+    45%       { transform: translateX(-50%) translateY(-22px) scaleY(1.04); }
+    55%       { transform: translateX(-50%) translateY(-22px) scaleY(1.04); }
+    90%       { transform: translateX(-50%) translateY(2px) scaleY(0.97); }
+  }
+  @keyframes pinguSway {
+    0%, 100% { margin-left: 0; }
+    25%       { margin-left: -14px; }
+    75%       { margin-left: 14px; }
+  }
+
+  .pingu-img {
+    width: var(--pingu-size);
+    height: var(--pingu-size);
+    object-fit: contain;
+    filter: drop-shadow(0 8px 24px rgba(0,60,120,0.35));
+    cursor: pointer;
+  }
+
+  /* ══════════════════════════
+     ELEMENT 3 — Ice crystals orbit
+  ══════════════════════════ */
+  .orbit {
+    position: absolute;
+    bottom: 18%;
+    left: 50%;
+    width: 360px;
+    height: 360px;
+    transform: translate(-50%, 50%);
+    animation: orbitSpin 16s linear infinite;
+    z-index: 6;
+    pointer-events: none;
+  }
+  .crystal {
+    position: absolute;
+    font-size: 22px;
+    top: 50%; left: 50%;
+    transform-origin: 0 0;
+  }
+  .crystal:nth-child(1) { transform: rotate(0deg)    translateX(175px) translateY(-50%); }
+  .crystal:nth-child(2) { transform: rotate(51deg)   translateX(175px) translateY(-50%); }
+  .crystal:nth-child(3) { transform: rotate(102deg)  translateX(175px) translateY(-50%); }
+  .crystal:nth-child(4) { transform: rotate(153deg)  translateX(175px) translateY(-50%); }
+  .crystal:nth-child(5) { transform: rotate(204deg)  translateX(175px) translateY(-50%); }
+  .crystal:nth-child(6) { transform: rotate(255deg)  translateX(175px) translateY(-50%); }
+  .crystal:nth-child(7) { transform: rotate(306deg)  translateX(175px) translateY(-50%); }
+  @keyframes orbitSpin { to { transform: translate(-50%, 50%) rotate(360deg); } }
+
+  /* ══════════════════════════
+     ELEMENT 4 — Bubbles (NOOT NOOT)
+  ══════════════════════════ */
+  .bubble {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(168,223,247,0.6);
+    background: rgba(168,223,247,0.1);
+    animation: bubbleRise var(--bd, 6s) ease-in infinite;
+    animation-delay: var(--bdd, 0s);
+    bottom: 22%;
+    left: var(--bx, 50%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 8;
+  }
+  @keyframes bubbleRise {
+    0%   { transform: translateY(0) scale(0.5);    opacity: 0; }
+    10%  { opacity: 0.8; }
+    90%  { opacity: 0.4; }
+    100% { transform: translateY(-85vh) scale(1.3); opacity: 0; }
+  }
+
+  /* ══════════════════════════
+     TITLE
+  ══════════════════════════ */
+  .title {
+    position: absolute;
+    top: 7%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 15;
+    animation: titleGlow 3s ease-in-out infinite alternate;
+    white-space: nowrap;
+  }
+  .title h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.5rem, 9vw, 6rem);
+    color: white;
+    letter-spacing: 0.04em;
+    text-shadow:
+      0 0 20px rgba(168,223,247,0.9),
+      0 0 50px rgba(100,200,255,0.5),
+      3px 3px 0 rgba(0,60,120,0.4);
+  }
+  .title .noot {
+    font-size: clamp(0.8rem, 2vw, 1.1rem);
+    color: var(--ice);
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    margin-top: 0.2em;
+    animation: nootBlink 2s step-end infinite;
+  }
+  @keyframes titleGlow {
+    0%   { filter: drop-shadow(0 0 8px rgba(168,223,247,0.4)); }
+    100% { filter: drop-shadow(0 0 28px rgba(168,223,247,0.9)); }
+  }
+  @keyframes nootBlink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0.3; }
+  }
+
+  /* ══════════════════════════
+     RESPONSIVE STATES
+  ══════════════════════════ */
+
+  /* State 1 — Mobile portrait (< 480px) */
+  @media (max-width: 479px) {
+    :root { --pingu-size: 100px; }
+    .orbit { width: 200px; height: 200px; }
+    .crystal { font-size: 14px; }
+    .crystal:nth-child(1) { transform: rotate(0deg)    translateX(95px) translateY(-50%); }
+    .crystal:nth-child(2) { transform: rotate(51deg)   translateX(95px) translateY(-50%); }
+    .crystal:nth-child(3) { transform: rotate(102deg)  translateX(95px) translateY(-50%); }
+    .crystal:nth-child(4) { transform: rotate(153deg)  translateX(95px) translateY(-50%); }
+    .crystal:nth-child(5) { transform: rotate(204deg)  translateX(95px) translateY(-50%); }
+    .crystal:nth-child(6) { transform: rotate(255deg)  translateX(95px) translateY(-50%); }
+    .crystal:nth-child(7) { transform: rotate(306deg)  translateX(95px) translateY(-50%); }
+    .title h1 { font-size: 2.2rem; }
+    .title .noot { letter-spacing: 0.25em; }
+    .ground { height: 18%; }
+    .pingu-wrap { bottom: 16%; }
+    .orbit    { bottom: 16%; }
+  }
+
+  /* State 2 — Mobile landscape / small tablet (480px – 767px) */
+  @media (min-width: 480px) and (max-width: 767px) {
+    :root { --pingu-size: 130px; }
+    .orbit { width: 270px; height: 270px; }
+    .crystal:nth-child(1) { transform: rotate(0deg)    translateX(130px) translateY(-50%); }
+    .crystal:nth-child(2) { transform: rotate(51deg)   translateX(130px) translateY(-50%); }
+    .crystal:nth-child(3) { transform: rotate(102deg)  translateX(130px) translateY(-50%); }
+    .crystal:nth-child(4) { transform: rotate(153deg)  translateX(130px) translateY(-50%); }
+    .crystal:nth-child(5) { transform: rotate(204deg)  translateX(130px) translateY(-50%); }
+    .crystal:nth-child(6) { transform: rotate(255deg)  translateX(130px) translateY(-50%); }
+    .crystal:nth-child(7) { transform: rotate(306deg)  translateX(130px) translateY(-50%); }
+  }
+
+  /* State 3 — Tablet (768px – 1023px) */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    :root { --pingu-size: 155px; }
+    .orbit { width: 320px; height: 320px; }
+    .crystal:nth-child(1) { transform: rotate(0deg)    translateX(155px) translateY(-50%); }
+    .crystal:nth-child(2) { transform: rotate(51deg)   translateX(155px) translateY(-50%); }
+    .crystal:nth-child(3) { transform: rotate(102deg)  translateX(155px) translateY(-50%); }
+    .crystal:nth-child(4) { transform: rotate(153deg)  translateX(155px) translateY(-50%); }
+    .crystal:nth-child(5) { transform: rotate(204deg)  translateX(155px) translateY(-50%); }
+    .crystal:nth-child(6) { transform: rotate(255deg)  translateX(155px) translateY(-50%); }
+    .crystal:nth-child(7) { transform: rotate(306deg)  translateX(155px) translateY(-50%); }
+  }
+
+  /* State 4 — Desktop (1024px – 1439px) */
+  @media (min-width: 1024px) and (max-width: 1439px) {
+    :root { --pingu-size: 180px; }
+  }
+
+  /* State 5 — Wide screen (≥ 1440px) */
+  @media (min-width: 1440px) {
+    :root { --pingu-size: 240px; }
+    .orbit { width: 460px; height: 460px; }
+    .crystal { font-size: 28px; }
+    .crystal:nth-child(1) { transform: rotate(0deg)    translateX(225px) translateY(-50%); }
+    .crystal:nth-child(2) { transform: rotate(51deg)   translateX(225px) translateY(-50%); }
+    .crystal:nth-child(3) { transform: rotate(102deg)  translateX(225px) translateY(-50%); }
+    .crystal:nth-child(4) { transform: rotate(153deg)  translateX(225px) translateY(-50%); }
+    .crystal:nth-child(5) { transform: rotate(204deg)  translateX(225px) translateY(-50%); }
+    .crystal:nth-child(6) { transform: rotate(255deg)  translateX(225px) translateY(-50%); }
+    .crystal:nth-child(7) { transform: rotate(306deg)  translateX(225px) translateY(-50%); }
+  }
+
+  /* State 6 — Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .pingu-wrap, .orbit, .aurora, .aurora2, .bg, .title, .flake, .bubble, .star {
+      animation: none !important;
+    }
+    .pingu-wrap { transform: translateX(-50%); }
+    .orbit      { transform: translate(-50%, 50%); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="bg"></div>
+<div class="aurora"></div>
+<div class="aurora2"></div>
+
+<!-- Stars -->
+<div class="stars" id="stars"></div>
+
+<!-- ELEMENT 1: Snowflakes -->
+<div class="snowflakes" id="snowflakes"></div>
+
+<!-- ELEMENT 3: Ice crystal orbit -->
+<div class="orbit">
+  <div class="crystal">❄️</div>
+  <div class="crystal">🧊</div>
+  <div class="crystal">❄️</div>
+  <div class="crystal">⭐</div>
+  <div class="crystal">❄️</div>
+  <div class="crystal">🧊</div>
+  <div class="crystal">❄️</div>
+</div>
+
+<!-- ELEMENT 2: Pingu (bouncing) -->
+<!-- ⬇️ 把下面 src="" 里面换成你的图片路径或网址就可以了 -->
+<div class="pingu-wrap" id="pinguWrap">
+  <img class="pingu-img" src="" alt="Pingu">
+</div>
+
+<!-- ELEMENT 4: Bubbles -->
+<div id="bubbles"></div>
+
+<!-- Ice ground -->
+<div class="ground"></div>
+
+<!-- Title -->
+<div class="title">
+  <h1>Pingu !</h1>
+  <div class="noot">noot noot 🐟</div>
+</div>
+
+<script>
+  /* Stars */
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random() * 2.5 + 1;
+    s.style.cssText = `
+      width:${sz}px; height:${sz}px;
+      top:${Math.random()*55}%;
+      left:${Math.random()*100}%;
+      --td:${1.5+Math.random()*3}s;
+      --tdd:${Math.random()*4}s;
+    `;
+    starsEl.appendChild(s);
+  }
+
+  /* Snowflakes */
+  const flakeChars = ['❄','✦','✧','·','*','❅'];
+  const snowEl = document.getElementById('snowflakes');
+  for (let i = 0; i < 35; i++) {
+    const f = document.createElement('div');
+    f.className = 'flake';
+    f.textContent = flakeChars[Math.floor(Math.random()*flakeChars.length)];
+    f.style.cssText = `
+      --fx:${Math.random()*100}%;
+      --fd:${6+Math.random()*10}s;
+      --fdd:-${Math.random()*12}s;
+      --fs:${10+Math.floor(Math.random()*18)}px;
+    `;
+    snowEl.appendChild(f);
+  }
+
+  /* Bubbles */
+  const bubblesEl = document.getElementById('bubbles');
+  for (let i = 0; i < 20; i++) {
+    const b = document.createElement('div');
+    b.className = 'bubble';
+    const sz = 8 + Math.floor(Math.random()*28);
+    b.style.cssText = `
+      width:${sz}px; height:${sz}px;
+      --bx:${20+Math.random()*60}%;
+      --bd:${5+Math.random()*8}s;
+      --bdd:-${Math.random()*10}s;
+    `;
+    bubblesEl.appendChild(b);
+  }
+
+  // NOOT NOOT on click
+  document.getElementById('pinguWrap').addEventListener('click', (e) => {
+    if (e.target === imgInput) return;
+    const noot = document.createElement('div');
+    noot.textContent = 'NOOT NOOT!';
+    noot.style.cssText = `
+      position:fixed;
+      left:${e.clientX - 50}px;
+      top:${e.clientY - 30}px;
+      font-family:'Fredoka One',cursive;
+      font-size:1.6rem;
+      color:white;
+      text-shadow:0 0 12px rgba(168,223,247,1), 2px 2px 0 rgba(0,60,120,0.5);
+      pointer-events:none;
+      z-index:999;
+      animation: nootPop 1.2s ease-out forwards;
+    `;
+    document.body.appendChild(noot);
+    setTimeout(() => noot.remove(), 1200);
+  });
+
+  // Inject nootPop keyframe
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes nootPop {
+      0%   { transform: scale(0.5) translateY(0);   opacity: 1; }
+      60%  { transform: scale(1.2) translateY(-20px); opacity: 1; }
+      100% { transform: scale(1)   translateY(-60px); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
+</script>
+</body>
+</html>
