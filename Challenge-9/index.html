@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Poem Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=Space+Mono&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      background-color: #f0ece3;
+      transition: background-color 0.8s ease;
+    }
+
+    .container {
+      text-align: center;
+      padding: 60px 40px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      letter-spacing: 0.05em;
+      color: #1a1a1a;
+      margin-bottom: 60px;
+      opacity: 0.85;
+    }
+
+    #poem-line {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.6rem;
+      color: #1a1a1a;
+      min-height: 2.5rem;
+      margin-bottom: 60px;
+      transition: opacity 0.4s ease;
+      max-width: 500px;
+      line-height: 1.5;
+    }
+
+    #poem-line.fade {
+      opacity: 0;
+    }
+
+    button {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      background: transparent;
+      border: 1.5px solid #1a1a1a;
+      color: #1a1a1a;
+      padding: 14px 36px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    button:hover {
+      background: #1a1a1a;
+      color: #f0ece3;
+    }
+
+
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Poem Generator</h1>
+    <p id="poem-line">click to begin</p>
+    <button id="btn">randomize</button>
+  </div>
+
+  <script>
+    // Step 3: Array of phrases from alt text descriptions
+    const phrases = [
+      "Endless blue stretching to the horizon",
+      "Waves quietly kissing the shore",
+      "Bright eyes in the warm sunlight",
+      "Golden fruit heavy on the branches",
+      "Sweet scent drifting through the air"
+    ]
+
+    // Background colors to pair with each phrase
+    const colors = [
+      "#c8dff0", // ocean blue
+      "#d6eaf8", // light wave
+      "#fde9c9", // warm golden
+      "#fdf3c0", // mango yellow
+      "#d5f5e3"  // garden green
+    ]
+
+    const poemLine = document.getElementById("poem-line")
+    const buttonTag = document.getElementById("btn")
+
+    let currentIndex = 0
+
+    // Step 4: Function that iterates through the array (with randomizer stretch goal)
+    buttonTag.addEventListener("click", function() {
+      // Stretch goal: randomize
+      currentIndex = Math.floor(Math.random() * phrases.length)
+
+      // Fade out
+      poemLine.classList.add("fade")
+
+      setTimeout(function() {
+        poemLine.innerHTML = phrases[currentIndex]
+        document.body.style.backgroundColor = colors[currentIndex]
+        poemLine.classList.remove("fade")
+      }, 400)
+    })
+  </script>
+
+</body>
+</html>
